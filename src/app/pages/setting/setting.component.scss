@@ -1,0 +1,136 @@
+@import '../../@theme/styles/themes';
+
+@include nb-install-component() {
+  nb-card {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  .summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    background: nb-theme(color-basic-200);
+    color: nb-theme(color-basic-800);
+  }
+
+  .chip.primary { background: nb-theme(color-primary-200); color: nb-theme(color-primary-700); }
+  .chip.info { background: nb-theme(color-info-200); color: nb-theme(color-info-700); }
+  .chip.success { background: nb-theme(color-success-200); color: nb-theme(color-success-700); }
+
+  .control-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .progress-area {
+    margin-top: 1rem;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06));
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .progress-fill {
+    flex: 1 1 auto;
+    width: 100%;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+  }
+
+  .progress-label {
+    min-width: 72px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .elapsed, .eta {
+    min-width: 70px;
+    color: nb-theme(color-basic-700);
+  }
+
+  // Add extra spacing between files count and elapsed time
+  .elapsed {
+    margin-left: 16px;
+  }
+
+  .batch-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .batch-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .batch-label {
+    font-weight: 500;
+    color: nb-theme(color-basic-800);
+  }
+
+  .batch-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .batch-count {
+    color: nb-theme(color-basic-700);
+  }
+
+  .batch-error {
+    color: nb-theme(color-danger-500);
+    font-weight: 600;
+  }
+
+  .queue-preview {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px dashed nb-theme(color-basic-400);
+  }
+
+  .queue-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: nb-theme(color-basic-800);
+    margin-bottom: 6px;
+  }
+
+  .queue-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}

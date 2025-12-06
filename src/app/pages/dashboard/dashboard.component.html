@@ -1,0 +1,57 @@
+<div class="row kpi-row">
+  <div class="col-12 col-md-3" *ngFor="let k of kpis">
+    <nb-card accent="success">
+      <nb-card-body class="kpi-card">
+        <nb-icon [icon]="k.icon" class="kpi-icon"></nb-icon>
+        <div class="kpi-content">
+          <div class="kpi-title">{{ k.title }}</div>
+          <div class="kpi-value">{{ k.value }}</div>
+        </div>
+      </nb-card-body>
+      
+    </nb-card>
+  </div>
+
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header>Manufactory FPY Trend (06:30–22:30)</nb-card-header>
+      <nb-card-body class="chart-card">
+        <div echarts [options]="throughputOptions" class="echart echart--wide"></div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  
+
+  <div class="col-12">
+    <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin: 8px 0;">
+      <span>Show</span>
+      <nb-select size="small" [(selected)]="selectedTopLabel" (selectedChange)="onTopChange($event)">
+        <nb-option value="Top 3">Top 3</nb-option>
+        <nb-option value="Top 5">Top 5</nb-option>
+        <nb-option value="All">All</nb-option>
+      </nb-select>
+    </div>
+  </div>
+
+  <div class="col-12" *ngFor="let pr of projectRowOptions">
+    <nb-card [accent]="pr.accent" class="project-card">
+      <nb-card-header>
+        <div class="card-title-row">
+          <span class="card-title">{{ pr.name }}</span>
+          <span class="avg-pill" [style.color]="pr.avgColor">Avg FPY {{ pr.avg | number:'1.0-1' }}%</span>
+        </div>
+      </nb-card-header>
+      <nb-card-body class="chart-card">
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <div echarts [options]="pr.pie" (chartInit)="attachPieClick(pr.name, $event)" class="echart"></div>
+          </div>
+          <div class="col-12 col-md-8">
+            <div echarts [options]="pr.bar" (chartInit)="attachBarClick(pr.name, $event)" class="echart"></div>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

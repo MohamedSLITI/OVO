@@ -1,0 +1,123 @@
+<nb-card class="glass filter-panel">
+  <nb-card-body>
+    <div class="filter-header" style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+      <button nbButton size="tiny" status="primary" (click)="toggleCollapsed()">
+        <nb-icon [icon]="filterCollapsed ? 'chevron-down-outline' : 'chevron-up-outline'"></nb-icon>
+        {{ filterCollapsed ? 'Expand Filters' : 'Collapse Filters' }}
+      </button>
+      
+      <div *ngIf="filterCollapsed" class="chips" style="display:flex; flex-wrap:wrap; gap:6px;">
+        <span *ngFor="let f of activeFilters" class="chip" style="padding:4px 8px; border-radius:12px; background: rgba(0,0,0,0.06);">{{ f }}</span>
+      </div>
+    </div>
+    <div class="segments" *ngIf="!filterCollapsed">
+      <div class="segment">
+        <nb-icon icon="folder-outline"></nb-icon>
+        <nb-select id="projSelect" size="small" placeholder="Project" [(selected)]="selectedProject" (selectedChange)="applyFilters()" aria-label="Project select">
+          <nb-option *ngFor="let p of projects" [value]="p">{{ p }}</nb-option>
+        </nb-select>
+      </div>
+      <span class="divider"></span>
+      <div class="segment">
+        <nb-icon icon="hard-drive-outline"></nb-icon>
+        <nb-select id="testerSelect" size="small" placeholder="Tester" [(selected)]="selectedTester" (selectedChange)="applyFilters()" aria-label="Tester select">
+          <nb-option *ngFor="let t of testers" [value]="t">{{ t }}</nb-option>
+        </nb-select>
+      </div>
+      <span class="divider"></span>
+      <div class="segment">
+        <nb-icon icon="cube-outline"></nb-icon>
+        <nb-select id="variantSelect" size="small" placeholder="Variant" multiple [(selected)]="selectedVariants" (selectedChange)="applyFilters()" aria-label="Variant select">
+          <nb-option *ngFor="let v of variants" [value]="v">{{ v }}</nb-option>
+        </nb-select>
+      </div>
+      <span class="divider"></span>
+      <div class="segment">
+        <nb-icon icon="calendar-outline"></nb-icon>
+        <nb-select size="small" [(selected)]="quickPreset" (selectedChange)="setQuickDate($event)" placeholder="Date" aria-label="Date preset">
+          <nb-option value="today">Today</nb-option>
+          <nb-option value="yesterday">Yesterday</nb-option>
+          <nb-option value="7d">Last 7 Days</nb-option>
+          <nb-option value="month">This Month</nb-option>
+          <nb-option value="custom">Custom Range</nb-option>
+        </nb-select>
+        <div class="date-inline" *ngIf="quickPreset==='custom'">
+          <input nbInput [nbDatepicker]="startPicker" placeholder="Start" [(ngModel)]="dateRange.start" (ngModelChange)="applyFilters()" aria-label="Start date" />
+          <button nbButton size="tiny" status="primary" (click)="startPicker.show()" aria-label="Open start date picker"><nb-icon icon="calendar-outline"></nb-icon></button>
+          <nb-datepicker #startPicker></nb-datepicker>
+          <span class="dash">–</span>
+          <input nbInput [nbDatepicker]="endPicker" placeholder="End" [(ngModel)]="dateRange.end" (ngModelChange)="applyFilters()" aria-label="End date" />
+          <button nbButton size="tiny" status="primary" (click)="endPicker.show()" aria-label="Open end date picker"><nb-icon icon="calendar-outline"></nb-icon></button>
+          <nb-datepicker #endPicker></nb-datepicker>
+        </div>
+      </div>
+      <span class="divider"></span>
+      <div class="segment">
+        <nb-icon icon="flash-outline"></nb-icon>
+        <nb-select size="small" [(selected)]="selectedShift" (selectedChange)="applyFilters()" placeholder="Shift" aria-label="Shift selection">
+          <nb-option [value]="1">Shift 1</nb-option>
+          <nb-option [value]="2">Shift 2</nb-option>
+          <nb-option [value]="'full'">Full Day</nb-option>
+          <nb-option [value]="'custom'">Custom</nb-option>
+        </nb-select>
+        <div class="time-inline" *ngIf="selectedShift==='custom'">
+          <input nbInput type="time" [(ngModel)]="startTime" (ngModelChange)="applyFilters()" aria-label="Start time">
+          <span class="dash">–</span>
+          <input nbInput type="time" [(ngModel)]="endTime" (ngModelChange)="applyFilters()" aria-label="End time">
+        </div>
+      </div>
+      <span class="divider"></span>
+      <div class="segment actions">
+        <span class="results-badge">{{ resultCount }}</span>
+        <button nbButton status="primary" size="small" (click)="applyAndCollapse()">Apply</button>
+        <button nbButton status="basic" appearance="ghost" size="small" (click)="clearFilters()">Clear</button>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+
+<nb-card class="glass view-menu-card" *ngIf="selectedTester">
+  <nb-card-body>
+    <div class="view-menu">
+      <button nbButton size="small" [status]="selectedView==='fpy' ? 'primary' : 'basic'" (click)="onViewChange('fpy')"><nb-icon icon="trending-up"></nb-icon> FPY Trend</button>
+      <button nbButton size="small" [status]="selectedView==='cycle' ? 'primary' : 'basic'" (click)="onViewChange('cycle')"><nb-icon icon="clock-outline"></nb-icon> Cycle Time</button>
+      <button nbButton size="small" [status]="selectedView==='qualification' ? 'primary' : 'basic'" (click)="onViewChange('qualification')"><nb-icon icon="award-outline"></nb-icon> Qualification</button>
+      <button nbButton size="small" [status]="selectedView==='pareto' ? 'primary' : 'basic'" (click)="onViewChange('pareto')"><nb-icon icon="bar-chart-outline"></nb-icon> Pareto</button>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+
+<nb-card class="glass view-menu-card" *ngIf="!selectedTester">
+  <nb-card-body>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <nb-icon icon="alert-triangle-outline"></nb-icon>
+      <span>Please select tester</span>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+
+<nb-card class="glass view-card" *ngIf="selectedTester">
+  <nb-card-header>{{ selectedView==='cycle' ? 'Cycle Time' : selectedView==='qualification' ? 'Qualification' : selectedView==='pareto' ? 'Pareto' : 'FPY Trend' }}</nb-card-header>
+  <nb-card-body>
+    <div *ngIf="selectedView==='cycle'" class="view-grid">
+      <div class="panel">
+        <div echarts [options]="cycleOptions" class="echart" (chartInit)="onCycleScatterInit($event)"></div>
+      </div>
+      <div class="panel">
+        <div echarts [options]="cyclePieOptions" class="echart" (chartInit)="onCyclePieInit($event)"></div>
+      </div>
+    </div>
+    <div *ngIf="selectedView==='qualification'" class="view-chart">
+      <div echarts [options]="qualificationOptions" class="echart"></div>
+    </div>
+    <div *ngIf="selectedView==='pareto'" class="view-chart">
+      <div echarts [options]="paretoOptions" class="echart"></div>
+    </div>
+    <div *ngIf="selectedView==='fpy'" class="view-chart">
+      <div echarts [options]="fpyOptions" class="echart"></div>
+    </div>
+  </nb-card-body>
+</nb-card>

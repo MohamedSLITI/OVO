@@ -1,0 +1,19 @@
+<div class="header-bar">
+  <div class="header-left">
+    <a (click)="toggleSidebar()" href="#" class="sidebar-toggle" [class.collapsed]="isCollapsed" [attr.aria-expanded]="!isCollapsed">
+      <nb-icon icon="menu-2-outline"></nb-icon>
+    </a>
+  </div>
+  <div class="header-title" (click)="navigateHome()">Operational Visibility Optimizer</div>
+  <div class="header-right">
+    <nb-actions size="small">
+      <nb-action class="user-action" *nbIsGranted="['view', 'user']" >
+        <nb-user [nbContextMenu]="userMenu"
+                 [onlyPicture]="userPictureOnly"
+                 [name]="user?.name"
+                 [picture]="user?.picture">
+        </nb-user>
+      </nb-action>
+    </nb-actions>
+  </div>
+</div>

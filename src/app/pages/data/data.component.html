@@ -1,0 +1,113 @@
+<div class="row kpi-row" *ngIf="hasData">
+  <div class="col-12 col-md-4">
+    <nb-card accent="success">
+      <nb-card-body class="kpi-card">
+        <nb-icon icon="briefcase-outline" class="kpi-icon"></nb-icon>
+        <div class="kpi-content">
+          <div class="kpi-title">Projects</div>
+          <div class="kpi-value">{{ projectCount }}</div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+  <div class="col-12 col-md-4">
+    <nb-card accent="info">
+      <nb-card-body class="kpi-card">
+        <nb-icon icon="asterisk" pack="ion" class="kpi-icon"></nb-icon>
+        <div class="kpi-content">
+          <div class="kpi-title">Testers</div>
+          <div class="kpi-value">{{ testerCount }}</div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+  <div class="col-12 col-md-4">
+    <nb-card accent="warning">
+      <nb-card-body class="kpi-card">
+        <nb-icon icon="checkmark-circle-2-outline" class="kpi-icon"></nb-icon>
+        <div class="kpi-content">
+          <div class="kpi-title">Overall FPY</div>
+          <div class="kpi-value" [style.color]="thresholdColor(overallAvg)">{{ overallAvg }}%</div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header class="header-row">
+        <span class="title">FPY Overview</span>
+        <span class="spacer"></span>
+        <button nbButton size="small" status="basic" (click)="toggleSort()">{{ sortAscending ? 'Asc' : 'Desc' }}</button>
+        <button nbButton size="small" status="basic" (click)="resetView()">Reset View</button>
+        <nb-select size="small" [(selected)]="scope" (selectedChange)="onScopeChange($event)">
+          <nb-option value="all">All projects</nb-option>
+          <nb-option value="top3">Top 3 lowest</nb-option>
+          <nb-option value="top5">Top 5 lowest</nb-option>
+        </nb-select>
+        <div class="chips" *ngIf="hasData" style="margin-left:12px;">
+          <span class="chip"><nb-icon icon="trending-down"></nb-icon> Lowest: <span class="chip-value" *ngFor="let p of lowProjects; let l = last">{{ p.name }}{{ l ? '' : ', ' }}</span></span>
+          <span class="chip"><nb-icon icon="checkmark-circle-2-outline"></nb-icon> Overall FPY <span class="chip-value" [style.color]="thresholdColor(overallAvg)">{{ overallAvg }}%</span></span>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <div *ngIf="!hasData" class="empty-state">
+          <nb-spinner size="large" status="primary"></nb-spinner>
+          <span>Loading data…</span>
+        </div>
+        <div class="row" *ngIf="hasData">
+          <div class="col-12 col-lg-6">
+            <nb-card class="glass">
+              <nb-card-header>Project FPY <span class="scope-badge" nbBadge [nbBadgeStatus]="scope === 'all' ? 'primary' : 'warning'">{{ scope === 'all' ? 'All' : (scope === 'top3' ? 'Top 3' : 'Top 5') }}</span></nb-card-header>
+              <nb-card-body class="chart-card">
+                <div echarts [options]="projectFpyOptions" class="echart" (chartInit)="onProjectChartInit($event)"></div>
+              </nb-card-body>
+            </nb-card>
+          </div>
+          <div class="col-12 col-lg-6">
+            <nb-card class="glass">
+              <nb-card-header>Project Totals</nb-card-header>
+              <nb-card-body class="chart-card">
+                <div echarts [options]="testerFpyOptions" class="echart"></div>
+              </nb-card-body>
+            </nb-card>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<div class="row" *ngIf="selectedProjectName">
+  <div class="col-12">
+    <nb-card accent="danger" class="project-card">
+      <nb-card-header class="detail-header">
+        <span class="card-title">{{ selectedProjectName }}</span>
+        <span class="spacer"></span>
+        <span class="avg-pill" *ngIf="detailSummary" [style.color]="thresholdColor(detailSummary.avg)">Avg FPY {{ detailSummary.avg | number:'1.0-1' }}%</span>
+      </nb-card-header>
+      <nb-card-body class="chart-card">
+        <div class="row">
+          <div class="col-12">
+            <div echarts [options]="projectDetailOptions" class="echart detail" (chartInit)="onDetailChartInit($event)"></div>
+          </div>
+        </div>
+        <div class="summary" *ngIf="detailSummary">
+          <span>Avg: <span [style.color]="thresholdColor(detailSummary.avg)">{{ detailSummary.avg }}%</span></span>
+          <span>Min: <span [style.color]="thresholdColor(detailSummary.min)">{{ detailSummary.min }}%</span></span>
+          <span>Max: <span [style.color]="thresholdColor(detailSummary.max)">{{ detailSummary.max }}%</span></span>
+        </div>
+        <div class="alerts" *ngIf="lowTesters && lowTesters.length">
+          <span class="alert-title">Low testers</span>
+          <div class="chips">
+            <span class="chip" *ngFor="let t of lowTesters"><nb-icon icon="alert-triangle-outline"></nb-icon> <span class="chip-value">{{ t }}</span></span>
+          </div>
+        </div>
+      
+
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

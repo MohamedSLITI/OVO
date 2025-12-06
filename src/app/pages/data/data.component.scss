@@ -1,0 +1,139 @@
+.empty-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #8f9bb3;
+}
+.echart {
+  height: 220px;
+}
+.spacer {
+  flex: 1;
+}
+.header-row {
+  display: flex;
+  align-items: center;
+}
+.title {
+  font-weight: 600;
+}
+.header-row nb-button {
+  margin-right: 8px;
+}
+.chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-left: 16px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 16px;
+  background: rgba(143, 155, 179, 0.15);
+  color: #8f9bb3;
+  font-size: 12px;
+}
+.chip-value { font-weight: 600; }
+.alerts {
+  margin-top: 8px;
+}
+.alert-title {
+  font-size: 12px;
+  color: #d50000;
+  margin-right: 8px;
+}
+.chips {
+  display: flex;
+  gap: 10px;
+  margin-left: 16px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 16px;
+  background: rgba(143, 155, 179, 0.15);
+  color: #8f9bb3;
+  font-size: 12px;
+}
+.chart-card .echart {
+  height: 240px;
+}
+.chart-card .echart.detail {
+  height: 300px;
+}
+.chart-card {
+  padding: 8px;
+}
+.glass {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.detail-header button {
+  margin-left: 6px;
+}
+.summary {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  color: #8f9bb3;
+  font-size: 12px;
+}
+.scope-badge {
+  margin-left: 8px;
+}
+
+.kpi-row {
+  .kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+  }
+  .kpi-icon {
+    font-size: 2rem;
+    color: nb-theme(color-success-default);
+  }
+  .kpi-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .kpi-title {
+    font-size: 0.875rem;
+    color: nb-theme(text-hint-color);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+}
+
+.project-card {
+  nb-card-header {
+    padding: 0.5rem 1rem;
+  }
+  nb-card-body.chart-card {
+    padding-top: 0.25rem;
+  }
+}
+
+.card-title {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.avg-pill {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}

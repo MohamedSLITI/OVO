@@ -1,0 +1,102 @@
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header>
+        <span class="card-title"><nb-icon icon="settings-2-outline"></nb-icon> Setting — Production Lines</span>
+      </nb-card-header>
+      <nb-card-body>
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="source"
+          (createConfirm)="onCreateConfirm($event)"
+          (editConfirm)="onEditConfirm($event)"
+          (deleteConfirm)="onDeleteConfirm($event)"></ng2-smart-table>
+      </nb-card-body>
+    </nb-card>
+  </div>
+  <div class="col-12" style="margin-top: 1rem;">
+    <nb-card>
+      <nb-card-header>
+        <span class="card-title"><nb-icon icon="play-circle-outline"></nb-icon> Process Files</span>
+        <div class="summary">
+          <span class="chip primary"><nb-icon icon="layers-outline"></nb-icon> {{ projects.length }} projects</span>
+          <span class="chip info" *ngIf="selectedProject"><nb-icon icon="cube-outline"></nb-icon> {{ selectedProject }}</span>
+          <span class="chip success" *ngIf="selectedTester"><nb-icon icon="person-outline"></nb-icon> {{ selectedTester }}</span>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <div class="control-bar">
+          <nb-icon icon="cloud-outline" title="API Base"></nb-icon>
+          <input nbInput placeholder="API Base" [(ngModel)]="apiBase" style="min-width: 260px;" />
+          <button nbButton size="tiny" status="info" (click)="saveApiBase()">Save</button>
+          <nb-checkbox [(ngModel)]="processAll">Process all repositories</nb-checkbox>
+          <nb-select [(selected)]="selectedProject" [disabled]="processAll" placeholder="Select project" style="min-width: 200px;">
+            <nb-option *ngFor="let p of projects" [value]="p">{{ p }}</nb-option>
+          </nb-select>
+          <nb-select [(selected)]="selectedTester" [disabled]="processAll" placeholder="Select tester" style="min-width: 200px;">
+            <nb-option *ngFor="let t of testers" [value]="t">{{ t }}</nb-option>
+          </nb-select>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span>Start week</span>
+            <input nbInput type="number" [(ngModel)]="startWeek" min="1" max="53" placeholder="1–53" style="width: 120px;" />
+            <span>Year</span>
+            <input nbInput type="number" [(ngModel)]="startYear" min="1970" max="2100" style="width: 120px;" />
+          </div>
+          <button nbButton status="primary" [disabled]="isProcessing || !selectedProject || !selectedTester" (click)="onProcessSingle()"
+                  [nbSpinner]="isProcessing" nbSpinnerStatus="primary" nbSpinnerSize="small" nbSpinnerMessage="">
+            {{ isProcessing ? 'Processing...' : 'Run Single Parse' }}
+          </button>
+          <button nbButton status="success" [disabled]="isProcessing || !hasSettingsData" (click)="onProcessBatch()"
+                  [nbSpinner]="isProcessing" nbSpinnerStatus="success" nbSpinnerSize="small" nbSpinnerMessage="">
+            {{ isProcessing ? 'Processing...' : 'Run Batch Parse' }}
+          </button>
+        </div>
+        <div *ngIf="jobStatuses.length && !isBatch" style="margin-top: 1rem;">
+          <div><strong>Status</strong></div>
+          <div class="batch-progress">
+            <div *ngFor="let j of jobStatuses" class="batch-row">
+              <div class="batch-label">{{ j.project }} / {{ j.tester }} — {{ j.status }}</div>
+              <div class="batch-bar">
+                <nb-progress-bar [value]="computeJobPercent(j)" [status]="jobStatusColor(j.status)" size="large" [displayValue]="true"></nb-progress-bar>
+                <span class="batch-count" *ngIf="jobProgressLabel(j)">{{ jobProgressLabel(j) }}</span>
+                <span class="batch-error" *ngIf="j.error">Error: {{ j.error }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isBatch" style="margin-top: 1rem;">
+          <div><strong>Batch Progress</strong></div>
+          <div class="batch-progress">
+            <div *ngFor="let item of batchQueue; let i = index">
+              <div *ngIf="i <= currentBatchIndex" class="batch-row">
+                <div class="batch-label">{{ item.project }} / {{ item.tester }}</div>
+                <div class="batch-bar">
+                  <nb-progress-bar *ngIf="i === currentBatchIndex" [value]="progressPercent" [status]="progressStatus" size="large" [displayValue]="true"></nb-progress-bar>
+                  <nb-progress-bar *ngIf="i < currentBatchIndex" [value]="100" status="success" size="large" [displayValue]="true"></nb-progress-bar>
+                  <span class="batch-count" *ngIf="i === currentBatchIndex && progressLabel">{{ progressLabel }}</span>
+                  <span class="batch-count" *ngIf="i < currentBatchIndex">Completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="queue-preview" *ngIf="currentBatchIndex + 1 < batchQueue.length">
+            <div class="queue-title"><nb-icon icon="arrow-forward-outline"></nb-icon> Up next</div>
+            <div class="queue-list">
+              <div *ngFor="let item of batchQueue | slice:(currentBatchIndex+1):(currentBatchIndex+4)" class="chip">
+                <nb-icon icon="person-outline"></nb-icon> {{ item.project }} / {{ item.tester }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isProcessing || progressPercent > 0" class="progress-area">
+          <div class="progress-row">
+            <nb-progress-bar [value]="progressPercent" [status]="progressStatus" size="giant" [displayValue]="true" class="progress-fill"></nb-progress-bar>
+            <span *ngIf="progressLabel" class="progress-label">{{ progressLabel }}</span>
+            <span *ngIf="elapsedLabel" class="elapsed" title="Elapsed">⏱ {{ elapsedLabel }}</span>
+            <span *ngIf="etaLabel" class="eta" title="ETA">⌛ {{ etaLabel }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
